@@ -714,8 +714,8 @@ export const FeedbackProvider = ({
   const generateSubmissionId = useCallback(() => {
     const d = new Date();
     const p = (n) => String(n).padStart(2, '0');
-    // qa-YYYY-MM-DD-HHMM (로컬시각). 같은 분엔 충돌하지만 사람이 읽기 쉬운 QA ID
-    return `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+    // qa-YYYY-MM-DD-HHMMSS (로컬시각, 초까지). 사람이 읽기 쉬운 QA ID
+    return `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
   }, []);
 
   // Async submission handler that adds to queue and processes in background

@@ -52,7 +52,7 @@ app.post('/api/feedback', async (req, res) => {
     if (!fb.id) {
       const d = new Date();
       const p = (n) => String(n).padStart(2, '0');
-      fb.id = `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+      fb.id = `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
     }
     // 스크린샷 base64 → Storage 업로드 → 공개 URL
     const shot = fb.screenshot;
