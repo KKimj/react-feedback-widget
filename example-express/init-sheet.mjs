@@ -124,13 +124,14 @@ SHEET_COLUMNS.forEach((c, i) => {
   });
 });
 
-// 3-7. 컬럼별 수평 정렬 (align 지정된 컬럼만 — 원문 등 긴 텍스트는 LEFT)
+// 3-7. 컬럼별 수평 정렬 — chip/select(= validation 드롭다운) 계열만 가운데, 나머지는 왼쪽.
+//   컬럼에 align 을 명시하면 그 값이 우선한다.
 SHEET_COLUMNS.forEach((c, i) => {
-  if (!c.align) return;
+  const horizontalAlignment = c.align || (c.validation ? 'CENTER' : 'LEFT');
   requests.push({
     repeatCell: {
       range: { sheetId, startRowIndex: 1, endRowIndex: 1000, startColumnIndex: i, endColumnIndex: i + 1 },
-      cell: { userEnteredFormat: { horizontalAlignment: c.align } },
+      cell: { userEnteredFormat: { horizontalAlignment } },
       fields: 'userEnteredFormat.horizontalAlignment',
     },
   });
