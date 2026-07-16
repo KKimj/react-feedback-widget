@@ -20,7 +20,12 @@ export default defineConfig({
   },
   server: {
     port: 8080,
-    open: true,
+    open: false,
+    host: true,
+    allowedHosts: true,
+    proxy: {
+      '/api/feedback': 'http://localhost:3010',
+    },
     fs: {
       allow: ['..'],
     },

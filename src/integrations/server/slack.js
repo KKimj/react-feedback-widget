@@ -44,6 +44,9 @@ function buildMessage(feedbackData) {
             { type: 'mrkdwn', text: `*From* ${user}` },
             { type: 'mrkdwn', text: `*Severity* ${sev}` },
             url ? { type: 'mrkdwn', text: `*Page* ${url}` } : null,
+            feedbackData.component ? { type: 'mrkdwn', text: `*요소* \`${feedbackData.component}\`` } : null,
+            feedbackData.selector ? { type: 'mrkdwn', text: `*셀렉터* \`${String(feedbackData.selector).slice(0, 80)}\`` } : null,
+            feedbackData.sheetUrl ? { type: 'mrkdwn', text: `*📄 <${feedbackData.sheetUrl}|스프레드시트에서 보기>*` } : null,
           ].filter(Boolean),
         },
         { type: 'divider' },
@@ -51,6 +54,9 @@ function buildMessage(feedbackData) {
           type: 'section',
           text: { type: 'mrkdwn', text: md.slice(0, 2500) || '_(no description)_' },
         },
+        ...(feedbackData.screenshotUrl
+          ? [{ type: 'image', image_url: feedbackData.screenshotUrl, alt_text: '스크린샷' }]
+          : []),
       ],
     }],
   };

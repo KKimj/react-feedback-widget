@@ -5,9 +5,10 @@ import {
   X, Send, Paperclip, ChevronRight,
   Monitor, Globe, Code, Layers, FileCode,
   Copy, Check, Video, Upload, Image, Trash2, FileText,
-  Database, ExternalLink, MessageSquare
+  Database, ExternalLink, MessageSquare, Pencil, Eraser, Undo2
 } from 'lucide-react';
 import { getTheme } from './theme.js';
+import { ReactSketchCanvas } from 'react-sketch-canvas';
 import { formatPath } from './utils.js';
 import { showError } from './ErrorToast.jsx';
 
@@ -418,17 +419,17 @@ const SheetsIcon = () => (
 );
 
 const FEEDBACK_TYPES = [
-  { id: 'bug', label: 'Bug' },
-  { id: 'feature', label: 'Feature' },
-  { id: 'improvement', label: 'Improvement' },
-  { id: 'other', label: 'Other' },
+  { id: 'bug', label: '버그' },
+  { id: 'feature', label: '기능' },
+  { id: 'improvement', label: '개선' },
+  { id: 'other', label: '기타' },
 ];
 
 const PRIORITY_OPTIONS = [
-  { id: 'P0', label: 'P0', hint: 'Critical' },
-  { id: 'P1', label: 'P1', hint: 'High' },
-  { id: 'P2', label: 'P2', hint: 'Medium' },
-  { id: 'P3', label: 'P3', hint: 'Low' },
+  { id: 'P0', label: 'P0', hint: '심각' },
+  { id: 'P1', label: 'P1', hint: '높음' },
+  { id: 'P2', label: 'P2', hint: '보통' },
+  { id: 'P3', label: 'P3', hint: '낮음' },
 ];
 
 const DEFAULT_SUGGESTED_LABELS = ['ui', 'a11y', 'perf', 'data', 'flow'];
@@ -469,6 +470,7 @@ export const FeedbackModal = ({
   
   const descriptionRef = useRef(null);
   const screenshotInputRef = useRef(null);
+  const sketchRef = useRef(null);
   const videoInputRef = useRef(null);
   const theme = getTheme(mode);
   
@@ -531,15 +533,44 @@ export const FeedbackModal = ({
     }
   };
 
-  const handleSubmit = () => {
+  // 스크린샷 위에 그린 펜 주석을 원본 이미지에 합성(flatten)
+  const flattenScreenshot = async (baseUrl) => {
+    if (!baseUrl || !sketchRef.current) return baseUrl;
+    let drawing;
+    try { drawing = await sketchRef.current.exportImage('png'); } catch { return baseUrl; }
+    return await new Promise((resolve) => {
+      const base = new window.Image();
+      base.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = base.naturalWidth || base.width;
+        c.height = base.naturalHeight || base.height;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(base, 0, 0);
+        const d = new window.Image();
+        d.onload = () => { ctx.drawImage(d, 0, 0, c.width, c.height); resolve(c.toDataURL('image/png')); };
+        d.onerror = () => resolve(baseUrl);
+        d.src = drawing;
+      };
+      base.onerror = () => resolve(baseUrl);
+      base.src = baseUrl;
+    });
+  };
+
+  const handleSubmit = async () => {
     if (!description.trim() || isSubmitting) return;
+
+    const baseShot = screenshot || manualScreenshot;
+    let flatShot = baseShot;
+    if (baseShot && sketchRef.current) {
+      try { flatShot = await sketchRef.current.exportImage('png'); } catch { flatShot = baseShot; }
+    }
 
     const feedbackData = {
       feedback: description.trim(),
       type: feedbackType,
       severity: priority,
       labels,
-      screenshot: screenshot || manualScreenshot,
+      screenshot: flatShot,
       videoBlob: videoBlob || manualVideo,
       attachment: manualFile,
       eventLogs: eventLogs || [],
@@ -590,18 +621,18 @@ export const FeedbackModal = ({
         <ModalHeader>
           <TitleGroup>
             <MessageSquare size={18} color={theme.colors.textSecondary} />
-            <ModalTitle>Send Feedback</ModalTitle>
+            <ModalTitle>피드백 보내기</ModalTitle>
           </TitleGroup>
           <CloseButton onClick={onClose}><X size={16} /></CloseButton>
         </ModalHeader>
 
         <ModalBody>
             <FieldRow>
-              <FieldLabel htmlFor="feedback-description">What's on your mind?</FieldLabel>
+              <FieldLabel htmlFor="feedback-description">무엇을 발견하셨나요?</FieldLabel>
               <StyledTextArea
                 id="feedback-description"
                 ref={descriptionRef}
-                placeholder="Describe what you saw, what you expected, and how to reproduce it…"
+                placeholder="무엇을 보셨는지, 어떻게 동작하길 기대했는지, 재현 방법을 적어주세요…"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 disabled={isSubmitting}
@@ -610,7 +641,7 @@ export const FeedbackModal = ({
 
             {activeMedia ? (
               <FieldRow>
-                <FieldLabel>Evidence</FieldLabel>
+                <FieldLabel>증거 자료</FieldLabel>
                 <MediaPreview
                   onClick={() => {
                     const src = screenshot || manualScreenshot;
@@ -618,7 +649,37 @@ export const FeedbackModal = ({
                   }}
                 >
                   {screenshot || manualScreenshot ? (
-                    <img src={screenshot || manualScreenshot} alt="Captured screenshot" />
+                    <div style={{ position: 'relative', width: '100%' }}
+                         onClick={(e) => e.stopPropagation()}>
+                      <ReactSketchCanvas
+                        ref={sketchRef}
+                        backgroundImage={screenshot || manualScreenshot}
+                        exportWithBackgroundImage={true}
+                        preserveBackgroundImageAspectRatio="xMidYMid meet"
+                        strokeColor="#ef4444"
+                        strokeWidth={3}
+                        withTimestamp={false}
+                        width="100%"
+                        height="340px"
+                        style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8 }}
+                      />
+                      <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 4, background: 'rgba(17,24,39,0.75)', borderRadius: 8, padding: 4, zIndex: 3 }}>
+                        {[
+                          { title: '펜', icon: <Pencil size={14} />, on: () => sketchRef.current?.eraseMode(false) },
+                          { title: '지우개', icon: <Eraser size={14} />, on: () => sketchRef.current?.eraseMode(true) },
+                          { title: '되돌리기', icon: <Undo2 size={14} />, on: () => sketchRef.current?.undo() },
+                          { title: '전체 지우기', icon: <Trash2 size={14} />, on: () => sketchRef.current?.clearCanvas() },
+                        ].map((b) => (
+                          <button key={b.title} type="button" title={b.title} onClick={b.on}
+                            style={{ display: 'flex', width: 28, height: 28, alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 6, background: 'transparent', color: '#fff', cursor: 'pointer' }}>
+                            {b.icon}
+                          </button>
+                        ))}
+                      </div>
+                      <div style={{ position: 'absolute', bottom: 8, left: 8, fontSize: 11, color: '#fff', background: 'rgba(17,24,39,0.65)', borderRadius: 6, padding: '3px 8px' }}>
+                        펜으로 스크린샷 위에 표시하세요
+                      </div>
+                    </div>
                   ) : (
                     <video src={videoUrl} controls onClick={(e) => e.stopPropagation()} />
                   )}
@@ -636,7 +697,7 @@ export const FeedbackModal = ({
             ) : (
               <EmptyMediaSlot onClick={() => screenshotInputRef.current?.click()}>
                 <Image size={16} />
-                <span>Attach Screenshot or Video</span>
+                <span>스크린샷 또는 영상 첨부</span>
                 <input
                   type="file"
                   ref={screenshotInputRef}
@@ -648,7 +709,7 @@ export const FeedbackModal = ({
             )}
 
             <FieldRow>
-              <FieldLabel>Category</FieldLabel>
+              <FieldLabel>분류</FieldLabel>
               <TypeSelector>
                 {FEEDBACK_TYPES.map(type => (
                   <TypePill
@@ -663,7 +724,7 @@ export const FeedbackModal = ({
             </FieldRow>
 
             <FieldRow>
-              <FieldLabel>Priority</FieldLabel>
+              <FieldLabel>우선순위</FieldLabel>
               <TypeSelector>
                 {PRIORITY_OPTIONS.map(opt => (
                   <TypePill
@@ -679,7 +740,7 @@ export const FeedbackModal = ({
             </FieldRow>
 
             <FieldRow>
-              <FieldLabel>Labels</FieldLabel>
+              <FieldLabel>라벨</FieldLabel>
               <TypeSelector>
                 {DEFAULT_SUGGESTED_LABELS.map(label => (
                   <TypePill
@@ -720,7 +781,7 @@ export const FeedbackModal = ({
           </IntegrationRow>
           
           <SubmitButton onClick={handleSubmit} disabled={!description.trim()}>
-            Send Feedback
+            피드백 보내기
             <Send size={14} />
           </SubmitButton>
         </Footer>

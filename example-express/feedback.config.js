@@ -8,11 +8,8 @@ import { defineConfig, connect } from 'react-visual-feedback';
 export default defineConfig({
   destinations: [
     connect.local(),                                     // browser fallback — always include
-    connect.github({ repo: 'acme/web' }),               // env: GITHUB_TOKEN
-    // connect.linear({ team: 'team-id' }),             // env: LINEAR_API_KEY, LINEAR_TEAM_ID
-    // connect.notion({ database: 'db-id' }),           // env: NOTION_TOKEN
-    // connect.hubspot(),                                // env: HUBSPOT_TOKEN
-    // connect.slack({ channel: '#bugs' }),             // env: SLACK_WEBHOOK_URL
+    connect.sheets(),                                    // env: GOOGLE_SERVICE_ACCOUNT, GOOGLE_SPREADSHEET_ID
+    connect.slack({ channel: '#프로젝트-skt-호시담' }),  // env: SLACK_WEBHOOK_URL
   ],
   ui: { variant: 'two-column' },
 });

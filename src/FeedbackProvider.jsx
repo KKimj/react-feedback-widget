@@ -712,7 +712,10 @@ export const FeedbackProvider = ({
 
   // Generate unique ID for submissions
   const generateSubmissionId = useCallback(() => {
-    return `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const d = new Date();
+    const p = (n) => String(n).padStart(2, '0');
+    // qa-YYYY-MM-DD-HHMM (로컬시각). 같은 분엔 충돌하지만 사람이 읽기 쉬운 QA ID
+    return `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
   }, []);
 
   // Async submission handler that adds to queue and processes in background

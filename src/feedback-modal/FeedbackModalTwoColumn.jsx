@@ -479,8 +479,8 @@ export const FeedbackModalTwoColumn = (props) => {
           <Title>
             <TitleIcon><MessageSquare size={20} strokeWidth={2} /></TitleIcon>
             <div>
-              <div>Send Feedback</div>
-              <Subtitle>Tell us what happened — we'll handle the rest</Subtitle>
+              <div>피드백 보내기</div>
+              <Subtitle>무슨 일이 있었는지 알려주세요 — 나머지는 저희가 처리할게요</Subtitle>
             </div>
           </Title>
           <CloseX onClick={onClose} aria-label="Close"><X size={18} /></CloseX>
@@ -495,24 +495,24 @@ export const FeedbackModalTwoColumn = (props) => {
           {s.isDraggingOver && (
             <DropOverlay>
               <Paperclip size={26} strokeWidth={1.5} />
-              Drop to attach
+              놓아서 첨부
               <span style={{ fontSize: 12, fontWeight: 400, opacity: 0.7 }}>
-                screenshots, video, audio, PDFs, logs — anything you have
+                스크린샷, 영상, 음성, PDF, 로그 — 무엇이든
               </span>
             </DropOverlay>
           )}
           <FormCol>
             <FieldRow>
-              <FieldLabel htmlFor="tc-desc">What's on your mind?</FieldLabel>
+              <FieldLabel htmlFor="tc-desc">무엇을 발견하셨나요?</FieldLabel>
               <TextArea id="tc-desc" ref={s.descriptionRef}
-                placeholder="Describe what you saw, what you expected, how to reproduce… (or paste a screenshot)"
+                placeholder="무엇을 보셨는지, 어떻게 동작하길 기대했는지, 재현 방법을 적어주세요… (스크린샷 붙여넣기도 가능)"
                 value={s.description} onChange={(e) => s.setDescription(e.target.value)}
                 onPaste={s.handlePaste}
                 disabled={s.isSubmitting} style={{ minHeight: 130 }} />
             </FieldRow>
 
             <FieldRow>
-              <FieldLabel>Category</FieldLabel>
+              <FieldLabel>분류</FieldLabel>
               <PillRow>
                 {FEEDBACK_TYPES.map(t => (
                   <Pill key={t.id} $active={s.feedbackType === t.id} onClick={() => s.setFeedbackType(t.id)}>{t.label}</Pill>
@@ -521,7 +521,7 @@ export const FeedbackModalTwoColumn = (props) => {
             </FieldRow>
 
             <FieldRow>
-              <FieldLabel>Priority</FieldLabel>
+              <FieldLabel>우선순위</FieldLabel>
               <PillRow>
                 {PRIORITY_OPTIONS.map(o => (
                   <Pill key={o.id} $active={s.priority === o.id} onClick={() => s.setPriority(o.id)}>{o.label} · {o.hint}</Pill>
@@ -530,7 +530,7 @@ export const FeedbackModalTwoColumn = (props) => {
             </FieldRow>
 
             <FieldRow>
-              <FieldLabel>Labels</FieldLabel>
+              <FieldLabel>라벨</FieldLabel>
               <PillRow>
                 {DEFAULT_SUGGESTED_LABELS.map(l => (
                   <Pill key={l} $active={s.labels.includes(l)} onClick={() => s.toggleLabel(l)}>{l}</Pill>
@@ -540,7 +540,7 @@ export const FeedbackModalTwoColumn = (props) => {
           </FormCol>
 
           <EvidenceCol>
-            <SectionHeading><Sparkles size={11} /> Evidence</SectionHeading>
+            <SectionHeading><Sparkles size={11} /> 증거 자료</SectionHeading>
 
             {s.activeMedia ? (
               <EvidenceCard onClick={() => s.activeImage && s.setZoomedImage(s.activeImage)}>
@@ -561,9 +561,9 @@ export const FeedbackModalTwoColumn = (props) => {
             ) : (
               <EmptyMedia onClick={() => s.screenshotInputRef.current?.click()}>
                 <ImageIcon className="empty-icon" size={28} strokeWidth={1.5} />
-                Drop · paste · or click to attach
+                놓기 · 붙여넣기 · 또는 클릭해 첨부
                 <span style={{ fontSize: 11, opacity: 0.7 }}>
-                  Screenshots, video, audio, PDF, logs — anything
+                  스크린샷, 영상, 음성, PDF, 로그 — 무엇이든
                 </span>
                 <input type="file" ref={s.screenshotInputRef}
                   style={{ display: 'none' }}
@@ -577,14 +577,14 @@ export const FeedbackModalTwoColumn = (props) => {
 
             <EvidenceActions>
               <ActionBtn type="button" onClick={() => s.screenshotInputRef.current?.click()}>
-                <Paperclip size={13} /> Attach
+                <Paperclip size={13} /> 첨부
               </ActionBtn>
               <ActionBtn type="button" onClick={toggleVoice} $active={voice.isRecording}
                 title={voice.error ? 'Microphone access denied' : 'Record a voice memo'}>
                 {voice.isRecording ? <Square size={13} /> : <Mic size={13} />}
                 {voice.isRecording
-                  ? `Stop · ${Math.floor(voice.elapsedMs / 1000)}s`
-                  : 'Voice memo'}
+                  ? `중지 · ${Math.floor(voice.elapsedMs / 1000)}s`
+                  : '음성 메모'}
               </ActionBtn>
             </EvidenceActions>
 
@@ -612,7 +612,7 @@ export const FeedbackModalTwoColumn = (props) => {
 
             {source && (
               <>
-                <SectionHeading><FileCode size={11} /> Source</SectionHeading>
+                <SectionHeading><FileCode size={11} /> 소스</SectionHeading>
                 <SourceChip>
                   <FileCode size={12} />
                   <span className="label">
@@ -627,14 +627,14 @@ export const FeedbackModalTwoColumn = (props) => {
 
         <Footer>
           <FooterMeta>
-            <span>{s.description.trim().length} chars</span>
+            <span>{s.description.trim().length}자</span>
             <MetaDot />
             <span>{s.priority} · {PRIORITY_OPTIONS.find(o => o.id === s.priority)?.hint}</span>
             <MetaDot />
-            <span>{s.labels.length} label{s.labels.length === 1 ? '' : 's'}</span>
+            <span>라벨 {s.labels.length}개</span>
           </FooterMeta>
           <RoyalSubmit onClick={s.handleSubmit} disabled={!s.description.trim()}>
-            Send Feedback <Send size={14} />
+            피드백 보내기 <Send size={14} />
           </RoyalSubmit>
         </Footer>
       </Modal>

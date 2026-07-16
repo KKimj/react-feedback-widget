@@ -148,6 +148,7 @@
     "jszip": "^3.10.1",
     "lucide-react": "^0.263.1",
     "modern-screenshot": "^4.6.7",
+    "react-sketch-canvas": "^8.0.0",
     "source-map-js": "^1.2.1"
   },
   "devDependencies": {

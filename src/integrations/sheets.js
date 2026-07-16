@@ -178,12 +178,12 @@ class SheetsClient {
   async appendRow(values, sheetName = null) {
     const range = `${sheetName || this.sheetName}!A:Z`;
 
-    return this.request(`/values/${encodeURIComponent(range)}:append`, {
+    return this.request(`/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`, {
       method: 'POST',
       body: JSON.stringify({
         values: [values],
         majorDimension: 'ROWS'
-      }) + '?valueInputOption=RAW&insertDataOption=INSERT_ROWS'
+      })
     });
   }
 

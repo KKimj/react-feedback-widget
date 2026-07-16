@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 export const FEEDBACK_TYPES = [
-  { id: 'bug', label: 'Bug' },
-  { id: 'feature', label: 'Feature' },
-  { id: 'improvement', label: 'Improvement' },
-  { id: 'other', label: 'Other' },
+  { id: 'bug', label: '버그' },
+  { id: 'feature', label: '기능' },
+  { id: 'improvement', label: '개선' },
+  { id: 'other', label: '기타' },
 ];
 
 export const PRIORITY_OPTIONS = [
-  { id: 'P0', label: 'P0', hint: 'Critical' },
-  { id: 'P1', label: 'P1', hint: 'High' },
-  { id: 'P2', label: 'P2', hint: 'Medium' },
-  { id: 'P3', label: 'P3', hint: 'Low' },
+  { id: 'P0', label: 'P0', hint: '심각' },
+  { id: 'P1', label: 'P1', hint: '높음' },
+  { id: 'P2', label: 'P2', hint: '보통' },
+  { id: 'P3', label: 'P3', hint: '낮음' },
 ];
 
 export const DEFAULT_SUGGESTED_LABELS = ['ui', 'a11y', 'perf', 'data', 'flow'];

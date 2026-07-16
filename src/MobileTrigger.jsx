@@ -13,9 +13,14 @@ const TriggerButton = styled.button`
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 52px;
+  min-width: 52px;
   height: 52px;
-  border-radius: 50%;
+  padding: ${p => p.$active ? '0' : '0 18px 0 15px'};
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 26px;
   border: none;
   background: ${p => p.$active ? '#ef4444' : p.theme.colors.btnPrimaryBg};
   color: white;
@@ -47,7 +52,10 @@ export const MobileTrigger = ({ mode = 'light', isActive, onActivate, onCancel }
       >
         {isActive
           ? <span style={{ fontSize: 22, lineHeight: 1 }}>✕</span>
-          : <MessageSquare size={22} />
+          : <>
+              <MessageSquare size={20} />
+              <span>버그/의견</span>
+            </>
         }
       </TriggerButton>
     </ThemeProvider>,

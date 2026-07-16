@@ -4,11 +4,18 @@ import { FeedbackProvider } from 'react-visual-feedback';
 function App() {
   return (
     <FeedbackProvider
-      onSubmit={(data) => {
-        console.log('=== Feedback Submitted ===');
-        console.log('dotPosition:', data.dotPosition);
-        console.log('elementInfo.selector:', data.elementInfo?.selector);
-        console.log('Full data:', data);
+      onSubmit={async (data) => {
+        console.log('=== Feedback Submitted ===', data);
+        try {
+          const r = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          console.log('e2e result:', await r.json());
+        } catch (e) {
+          console.error('e2e submit failed:', e);
+        }
       }}
       dashboard={true}
       userName="Test User"
