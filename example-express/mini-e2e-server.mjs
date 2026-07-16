@@ -4,6 +4,7 @@ import express from 'express';
 import { Storage } from '@google-cloud/storage';
 import createSheetsHandler from '../src/integrations/sheets.js';
 import { createSlackHandler } from '../src/integrations/server/slack.js';
+import { readFileSync } from 'node:fs';
 
 // ── 설정 (env 로 주입, 없으면 placeholder) ──
 const CONFIG = {
@@ -19,8 +20,16 @@ const CONFIG = {
 const storage = new Storage({ keyFilename: CONFIG.keyFile });
 const bucket = storage.bucket(CONFIG.bucket);
 
+// 서비스 계정 키를 한 번 읽어 Sheets 핸들러에도 전달
+// (Storage 는 keyFilename 경로, Sheets 는 credentials JSON 을 요구하므로 env 두 종류가 필요 없게 통일)
+const saCredentials = (CONFIG.keyFile && CONFIG.keyFile !== 'your-key')
+  ? JSON.parse(readFileSync(CONFIG.keyFile, 'utf8'))
+  : undefined;
+
 const sheets = createSheetsHandler({
   sheetName: CONFIG.sheetName,
+  credentials: saCredentials,
+  spreadsheetId: CONFIG.spreadsheetId,
   __allowUnwrappedInProd: true,
   // 시트 컬럼 매핑: ID | 우선순위 | 원문 | 상태 | 작업내용 | 요소 | 셀렉터 | 링크 | 스크린샷
   columnOrder: ['id', 'priority', 'feedback', 'status', 'assignee', 'component', 'selector', 'link', 'screenshot'],
