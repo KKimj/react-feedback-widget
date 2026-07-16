@@ -9,6 +9,7 @@ import { Storage } from '@google-cloud/storage';
 import createSheetsHandler from '../src/integrations/sheets.js';
 import { createSlackHandler } from '../src/integrations/server/slack.js';
 import { readFileSync, existsSync } from 'node:fs';
+import { GoogleAuth } from 'google-auth-library';
 import { SHEET_COLUMN_ORDER, toColumnsMap } from './sheet-columns.mjs';
 
 // ── 설정 (env 주입) ──
@@ -18,11 +19,8 @@ const CONFIG = {
   storagePath:   process.env.STORAGE_PATH || 'public/qa',
   spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID || '',
   sheetName:     process.env.SHEET_NAME || 'Feedback',
-  // 시트 링크: 명시 SHEET_URL 우선, 없으면 spreadsheetId 로 생성 (둘 다 없으면 링크 생략)
-  sheetUrl:      process.env.SHEET_URL
-                   || (process.env.GOOGLE_SPREADSHEET_ID
-                        ? `https://docs.google.com/spreadsheets/d/${process.env.GOOGLE_SPREADSHEET_ID}/edit`
-                        : ''),
+  // 시트 링크: 명시 SHEET_URL 우선. 없으면 아래서 실제 기입 탭(gid)까지 포함해 자동 생성.
+  sheetUrlOverride: process.env.SHEET_URL || '',
   port:          Number(process.env.PORT) || 3010,
 };
 
@@ -45,7 +43,29 @@ const sheets = saEnabled
   : null;
 const slack = createSlackHandler({}); // env: SLACK_WEBHOOK_URL
 
-console.log(`[config] SA=${saEnabled ? 'on' : 'off'} · Storage=${bucket ? 'on' : 'off'} · Sheets=${sheets ? 'on' : 'off'} · Slack=on`);
+// 스프레드시트 링크 — Slack 카드가 "실제 기입되는 탭(gid)"을 정확히 가리키게 한다.
+// SHEET_URL 을 명시하면 그대로. 아니면 SA 로 sheetName→gid 를 조회해 gid 포함 링크를 만든다.
+async function resolveSheetGid() {
+  if (!saEnabled || !CONFIG.spreadsheetId) return null;
+  try {
+    const auth = new GoogleAuth({ keyFile: CONFIG.keyFile, scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'] });
+    const client = await auth.getClient();
+    const meta = (await client.request({
+      url: `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}?fields=sheets.properties`,
+    })).data;
+    const sheet = (meta.sheets || []).find((s) => s.properties.title === CONFIG.sheetName);
+    return sheet?.properties?.sheetId ?? null;
+  } catch {
+    return null;
+  }
+}
+const sheetGid = await resolveSheetGid();
+const SHEET_LINK = CONFIG.sheetUrlOverride
+  || (CONFIG.spreadsheetId
+        ? `https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheetId}/edit${sheetGid != null ? `?gid=${sheetGid}#gid=${sheetGid}` : ''}`
+        : '');
+
+console.log(`[config] SA=${saEnabled ? 'on' : 'off'} · Storage=${bucket ? 'on' : 'off'} · Sheets=${sheets ? 'on' : 'off'} · Slack=on · sheetLink=${SHEET_LINK || '(none)'}`);
 
 const app = express();
 app.use(express.json({ limit: '25mb' }));
@@ -75,7 +95,7 @@ app.post('/api/feedback', async (req, res) => {
         fb.screenshotUrl = `https://firebasestorage.googleapis.com/v0/b/${CONFIG.bucket}/o/${encodeURIComponent(name)}?alt=media`;
       }
     }
-    if (CONFIG.sheetUrl) fb.sheetUrl = CONFIG.sheetUrl;
+    if (SHEET_LINK) fb.sheetUrl = SHEET_LINK;
     // 시트 append (SA 있을 때만) + Slack 카드(항상)
     if (sheets) await sheets({ body: { action: 'append', feedbackData: fb } }, null);
     await slack({ body: fb }, null);
