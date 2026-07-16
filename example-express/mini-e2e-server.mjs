@@ -9,6 +9,7 @@ import { Storage } from '@google-cloud/storage';
 import createSheetsHandler from '../src/integrations/sheets.js';
 import { createSlackHandler } from '../src/integrations/server/slack.js';
 import { readFileSync, existsSync } from 'node:fs';
+import { SHEET_COLUMN_ORDER, toColumnsMap } from './sheet-columns.mjs';
 
 // ── 설정 (env 주입) ──
 const CONFIG = {
@@ -38,19 +39,8 @@ const sheets = saEnabled
       credentials: saCredentials,
       spreadsheetId: CONFIG.spreadsheetId,
       __allowUnwrappedInProd: true,
-      columnOrder: ['id', 'priority', 'feedback', 'status', 'assignee', 'component', 'selector', 'link', 'screenshot', 'imageUrl'],
-      columns: {
-        id:         { header: 'ID',       field: 'id' },
-        priority:   { header: '우선순위', field: 'severity', transform: (v) => v || '' },
-        feedback:   { header: '원문',     field: 'feedback' },
-        status:     { header: '상태',     field: 'status', transform: (v) => v || '' },
-        assignee:   { header: '작업내용', field: 'assignee', transform: (v) => v || '' },
-        component:  { header: '요소',     field: 'component', transform: (v) => v || '' },
-        selector:   { header: '셀렉터',   field: 'selector', transform: (v) => v || '' },
-        link:       { header: '링크',     field: 'url' },
-        screenshot: { header: '스크린샷', field: 'screenshotUrl', transform: (v) => (v ? `=IMAGE("${v}")` : '') },
-        imageUrl:   { header: '이미지 URL', field: 'screenshotUrl', transform: (v) => v || '' },
-      },
+      columnOrder: SHEET_COLUMN_ORDER,   // 컬럼 정의는 sheet-columns.mjs(SoT) 공유 — init-sheet.mjs 와 일치
+      columns: toColumnsMap(),
     })
   : null;
 const slack = createSlackHandler({}); // env: SLACK_WEBHOOK_URL

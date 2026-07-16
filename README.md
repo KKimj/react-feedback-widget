@@ -12,14 +12,16 @@
 > - 🏷 **제출 ID** — `qa-YYYY-MM-DD-HHMMSS` 형식(초까지)
 > - 🐛 **버그 수정** — Google Sheets `append` 가 쿼리스트링을 JSON body 에 붙여 400 나던 문제(→ URL 로 이동 + `USER_ENTERED`)
 > - 💬 **Slack 카드 강화** — 이미지 블록 + 선택 요소(`component`/`selector`) + 스프레드시트 링크(옵션)
-> - 📄 **시트 컬럼** — `ID·우선순위·원문·상태·작업내용·요소·셀렉터·링크·스크린샷(=IMAGE)`
-> - 🔗 **원클릭 e2e 통합 서버**([`example-express/mini-e2e-server.mjs`](./example-express/mini-e2e-server.mjs)) — 스크린샷 base64 → Cloud Storage 업로드 + Google Sheets + Slack 을 한 번에
+> - 📄 **시트 컬럼** — `ID·우선순위·원문·상태·작업내용·요소·셀렉터·링크·스크린샷(=IMAGE)·이미지 URL`
+> - 🎨 **시트 포맷 초기화**([`example-express/init-sheet.mjs`](./example-express/init-sheet.mjs)) — 헤더/헤더고정/컬럼너비/행높이 + 우선순위·상태 **드롭다운**을 한 번에 세팅. 컬럼 정의는 [`sheet-columns.mjs`](./example-express/sheet-columns.mjs) **단일 SoT**(통합 서버 append 와 공유 → 컬럼 바꿔도 서로 안 어긋남)
+> - 🔗 **원클릭 e2e 통합 서버**([`example-express/mini-e2e-server.mjs`](./example-express/mini-e2e-server.mjs)) — 스크린샷 base64 → Cloud Storage 업로드 + Google Sheets + Slack 을 한 번에. SA(서비스계정)는 **선택** — 없으면 Slack 만 동작
 >
 > ### 빠른 시작 (통합 서버)
 > ```bash
 > cd example-express
 > npm install
 > cp .env.example .env          # 서비스계정·버킷·시트·Slack 값 채우기
+> node init-sheet.mjs           # (SA 있을 때) 시트 헤더·서식·드롭다운 초기화 — 최초 1회
 > node mini-e2e-server.mjs       # http://localhost:3010
 > ```
 > 위젯 데모(별도 터미널): `cd example && npm install && npm run dev` — vite proxy 로 `/api/feedback` 을 통합 서버로 넘깁니다.
