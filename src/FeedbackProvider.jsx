@@ -305,6 +305,8 @@ export const FeedbackProvider = ({
   feedbackDotsData,
   // Mobile
   enableMobileFeedback = true,
+  triggerBottom = 24,   // 트리거 버튼 기본 위치(px) — 소비 앱에서 다른 위젯과 겹침 회피용
+  triggerRight = 24,
   // AI-actionable capture (Phase C); when omitted the widget behaves identically to post-B2
   captureConfig,
   // Security (Phase A)
@@ -1225,6 +1227,8 @@ export const FeedbackProvider = ({
         {enableMobileFeedback && isTouchDevice && (
           <MobileTrigger
             mode={mode}
+            bottom={triggerBottom}
+            right={triggerRight}
             isActive={isActive}
             onActivate={() => {
               if (!isActive && !isRecording) {

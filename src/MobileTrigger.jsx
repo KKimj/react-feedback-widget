@@ -11,8 +11,8 @@ const fadeIn = keyframes`
 
 const TriggerButton = styled.button`
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: ${p => p.$bottom ?? 24}px;
+  right: ${p => p.$right ?? 24}px;
   min-width: 52px;
   height: 52px;
   padding: ${p => p.$active ? '0' : '0 18px 0 15px'};
@@ -53,7 +53,7 @@ const loadPos = () => {
 
 // 드래그로 위치 이동 가능한 트리거. 드래그(이동)와 클릭(열기)을 moved 플래그로 구분한다.
 // 이동한 위치는 localStorage 에 저장돼 새로고침 후에도 유지된다.
-export const MobileTrigger = ({ mode = 'light', isActive, onActivate, onCancel }) => {
+export const MobileTrigger = ({ mode = 'light', isActive, onActivate, onCancel, bottom = 24, right = 24 }) => {
   const theme = getTheme(mode);
   const [pos, setPos] = useState(loadPos);
   const drag = useRef({ active: false, moved: false, offsetX: 0, offsetY: 0 });
@@ -100,6 +100,8 @@ export const MobileTrigger = ({ mode = 'light', isActive, onActivate, onCancel }
     <ThemeProvider theme={theme}>
       <TriggerButton
         $active={isActive}
+        $bottom={bottom}
+        $right={right}
         style={posStyle}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
