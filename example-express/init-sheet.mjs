@@ -117,4 +117,15 @@ SHEET_COLUMNS.forEach((c, i) => {
 });
 
 await client.request({ url: `${base}:batchUpdate`, method: 'POST', data: { requests } });
+
+// 4. (선택) 데이터 행 비우기 — 컬럼 구조(개수/순서)를 바꾼 뒤 옛 행이 한 칸씩 밀려 보일 때
+//    CLEAR_DATA=1 로 헤더만 남기고 데이터(A2:)를 지워 정합을 맞춘다.
+if (process.env.CLEAR_DATA === '1') {
+  await client.request({
+    url: `${base}/values/${encodeURIComponent(`'${sheetName}'!A2:Z100000`)}:clear`,
+    method: 'POST', data: {},
+  });
+  console.log('  · 데이터 행(A2:) 비움 (CLEAR_DATA=1) — 옛 컬럼 구조로 쌓인 어긋난 행 정리');
+}
+
 console.log(`✓ 시트 '${sheetName}' 포맷 초기화 완료 — ${colCount}컬럼 · 헤더 고정 · 드롭다운(우선순위·상태) · 너비/행높이`);
