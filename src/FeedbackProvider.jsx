@@ -635,10 +635,14 @@ export const FeedbackProvider = ({
     }
 
     if (!isCanvasActive && !isModalOpen) {
+      // react-grab 처럼 선택 중에는 서비스를 정지 — 스크롤을 잠그고 클릭은 요소 선택으로만(handleElementClick 이 preventDefault)
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('click', handleElementClick, true);
 
       return () => {
+        document.body.style.overflow = prevOverflow;
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('click', handleElementClick, true);
       };
@@ -743,7 +747,7 @@ export const FeedbackProvider = ({
     const timeoutMs = hasLargeMedia ? 60000 : 30000; // 1 min for large, 30s otherwise
 
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Submission timed out')), timeoutMs);
+      setTimeout(() => reject(new Error('전송 시간이 초과됐어요')), timeoutMs);
     });
 
     const submitPromise = (async () => {
@@ -989,7 +993,7 @@ export const FeedbackProvider = ({
       userAgent: navigator.userAgent,
       viewport: { width: window.innerWidth, height: window.innerHeight },
       timestamp: new Date().toISOString(),
-      userName: userName || 'Anonymous',
+      userName: userName || '익명',
       userEmail: userEmail || null
     };
 
@@ -1007,11 +1011,11 @@ export const FeedbackProvider = ({
         await onSubmit(redactedCanvas);
       }
 
-      showSuccess('Feedback submitted successfully!', 'Success');
+      showSuccess('피드백이 전송됐어요!', '전송 완료');
       dispatch({ type: 'STOP_HOVERING' });
       dispatch({ type: 'SET_STATE', payload: { selectedElement: null, screenshot: null } });
     } catch (error) {
-      showError(error.message || 'Failed to save feedback. Please try again.', 'Submission Error');
+      showError(error.message || '피드백 전송에 실패했어요. 다시 시도해주세요.', '전송 오류');
     }
   }, [dashboard, onSubmit, userName, userEmail, setIsActive]);
 
@@ -1027,7 +1031,7 @@ export const FeedbackProvider = ({
       dispatch({ type: 'START_RECORDING_SUCCESS' });
     } catch (error) {
       dispatch({ type: 'START_RECORDING_FAILURE' });
-      showError('Could not start recording. Please ensure you have granted screen and microphone permissions.', 'Recording Error');
+      showError('녹화를 시작할 수 없어요. 화면·마이크 권한을 확인해주세요.', '녹화 오류');
     }
   }, []);
 
@@ -1053,10 +1057,10 @@ export const FeedbackProvider = ({
       const { videoBlob: blob, events } = await recorder.stop();
       dispatch({ type: 'STOP_RECORDING', payload: { blob, events } });
       if (!blob || blob.size === 0) {
-        showError('Recording failed: No video data was captured. Please try again.', 'Recording Error');
+        showError('녹화 실패: 영상 데이터가 없어요. 다시 시도해주세요.', '녹화 오류');
       }
     } catch (error) {
-      showError('Failed to stop recording properly. Please try again.', 'Recording Error');
+      showError('녹화를 제대로 멈추지 못했어요. 다시 시도해주세요.', '녹화 오류');
       dispatch({ type: 'CANCEL_RECORDING' });
     }
   }, []);
@@ -1109,7 +1113,7 @@ export const FeedbackProvider = ({
 
             {isTouchDevice && (
               <MobileBanner>
-                Tap any element to report feedback
+                요소를 탭해서 피드백을 남기세요
                 <MobileBannerClose onClick={() => {
                   setIsActive(false);
                   dispatch({ type: 'RESET_MODAL' });

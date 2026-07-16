@@ -1,6 +1,6 @@
 {
   "name": "@team-spacey/react-feedback-widget",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
