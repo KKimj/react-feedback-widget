@@ -58,6 +58,7 @@ app.post('/api/feedback', async (req, res) => {
     fb.severity = fb.severity || fb.priority || 'P2';
     fb.selector = fb.elementInfo?.selector || fb.selector || '';
     fb.component = fb.component || fb.elementInfo?.reactComponent || fb.elementInfo?.tagName || '';
+    fb.reporter = fb.reporter || fb.userName || fb.userEmail || '';   // 제보자: 위젯 userName/userEmail prop 에서
     if (!fb.id) {
       const d = new Date();
       const p = (n) => String(n).padStart(2, '0');
