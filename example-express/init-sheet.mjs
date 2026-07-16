@@ -93,12 +93,20 @@ requests.push({
   },
 });
 
-// 3-5. 본문 셀 정렬 (세로 가운데 + 줄바꿈)
+// 3-5. 본문 셀 서식 — 흰 배경 + 검은 글씨 + 세로 가운데 + 줄바꿈.
+//   ⚠️ append(INSERT_ROWS)는 바로 위 행 서식을 상속한다. 데이터 영역을 미리 흰색으로
+//   칠해두지 않으면 헤더(남색+흰글씨)가 아래로 번져 글씨가 안 보인다. 이 리셋이 그걸 막는다.
 requests.push({
   repeatCell: {
-    range: { sheetId, startRowIndex: 1, startColumnIndex: 0, endColumnIndex: colCount },
-    cell: { userEnteredFormat: { verticalAlignment: 'MIDDLE', wrapStrategy: 'WRAP' } },
-    fields: 'userEnteredFormat(verticalAlignment,wrapStrategy)',
+    range: { sheetId, startRowIndex: 1, endRowIndex: 1000, startColumnIndex: 0, endColumnIndex: colCount },
+    cell: {
+      userEnteredFormat: {
+        backgroundColor: { red: 1, green: 1, blue: 1 },
+        textFormat: { foregroundColor: { red: 0, green: 0, blue: 0 }, bold: false },
+        verticalAlignment: 'MIDDLE', wrapStrategy: 'WRAP',
+      },
+    },
+    fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment,wrapStrategy)',
   },
 });
 
