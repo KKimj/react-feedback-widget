@@ -17,7 +17,42 @@
 > - 🎨 **시트 포맷 초기화**([`example-express/init-sheet.mjs`](./example-express/init-sheet.mjs)) — 헤더/헤더고정/컬럼너비/행높이 + 우선순위·상태 **드롭다운**을 한 번에 세팅. 컬럼 정의는 [`sheet-columns.mjs`](./example-express/sheet-columns.mjs) **단일 SoT**(통합 서버 append 와 공유 → 컬럼 바꿔도 서로 안 어긋남)
 > - 🔗 **원클릭 e2e 통합 서버**([`example-express/mini-e2e-server.mjs`](./example-express/mini-e2e-server.mjs)) — 스크린샷 base64 → Cloud Storage 업로드 + Google Sheets + Slack 을 한 번에. SA(서비스계정)는 **선택** — 없으면 Slack 만 동작
 >
-> ### 빠른 시작 (통합 서버)
+> ### 📦 설치 · 사용 (소비 앱)
+> `.npmrc` 에 레지스트리 등록 후 설치(`read:packages` scope 필요):
+> ```bash
+> # .npmrc:  @team-spacey:registry=https://npm.pkg.github.com
+> export GITHUB_TOKEN="$(gh auth token)"
+> pnpm add @team-spacey/react-feedback-widget styled-components
+> ```
+> 앱을 Provider 로 감싸면 끝 — `Alt+Q`(또는 우하단 드래그 버튼)로 요소를 찍으면 `onSubmit(data)` 로 스크린샷 2종·셀렉터·URL·제보자가 넘어온다:
+> ```tsx
+> import { FeedbackProvider } from '@team-spacey/react-feedback-widget';
+>
+> const enabled = import.meta.env.DEV || import.meta.env.VITE_DEPLOY_ENV === 'stg'; // 민감 화면 보호 — stg/dev 만
+> return enabled ? (
+>   <FeedbackProvider
+>     userName={user?.name}
+>     userEmail={user?.email}
+>     triggerBottom={88}                       // 다른 위젯과 겹치면 위치 조정(드래그 위치는 localStorage 저장)
+>     onSubmit={async (data) => { await api.post('/qa-feedback', data); }}
+>   >
+>     {children}
+>   </FeedbackProvider>
+> ) : children;
+> ```
+>
+> ### 🔌 제보 목적지 + 필요 조건
+> `onSubmit(data)` 에서 원하는 백엔드로 보낸다. **위젯(프론트)은 SA 불필요** — SA 는 백엔드가 Sheet/Storage 를 쓸 때만 필요하다.
+>
+> | 목적지 | 하는 일 | 필요 조건 |
+> |---|---|---|
+> | 💬 **Slack** | webhook 알림 카드 | webhook URL 만 (SA 불필요) |
+> | 📄 **Google Sheet** | 행 append | **Google SA** — 대상 시트에 SA 를 **편집자로 공유** + Sheets API 활성화 |
+> | 🖼 **Cloud Storage** | 스크린샷 업로드 → 공개 URL | **Google SA** — 버킷 쓰기 권한(`storage.objectAdmin`) |
+>
+> 서버 참고 구현: `example-express/mini-e2e-server.mjs`(SA 키 파일) / theraco 는 Cloud Run **런타임 SA(ADC)** 로 처리(별도 키 없이 시트 편집자 공유 + API 활성화 + webhook Secret).
+>
+> ### 빠른 시작 (통합 서버 데모)
 > ```bash
 > cd example-express
 > npm install
