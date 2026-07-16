@@ -153,6 +153,7 @@ const initialState = {
   tooltipStyle: {},
   isModalOpen: false,
   screenshot: null,
+  fullScreenshot: null,
   isCapturing: false,
   isDashboardOpen: false,
   isCanvasActive: false,
@@ -187,7 +188,7 @@ function feedbackReducer(state, action) {
     case 'START_CAPTURE':
       return { ...state, isCapturing: true, selectedElement: action.payload };
     case 'COMPLETE_CAPTURE':
-      return { ...state, isCapturing: false, screenshot: action.payload, isModalOpen: true, hoveredElement: null, hoveredComponentInfo: null };
+      return { ...state, isCapturing: false, screenshot: action.payload, fullScreenshot: action.fullScreenshot ?? null, isModalOpen: true, hoveredElement: null, hoveredComponentInfo: null };
     case 'CANCEL_CAPTURE':
       return { ...state, isCapturing: false, hoveredElement: null, hoveredComponentInfo: null };
     case 'OPEN_DASHBOARD':
@@ -213,7 +214,7 @@ function feedbackReducer(state, action) {
     case 'STOP_RECORDING':
       return { ...state, isRecordingActive: false, isRecording: false, isInitializing: false, isPaused: false, videoBlob: action.payload.blob, eventLogs: action.payload.events, isModalOpen: action.payload.blob && action.payload.blob.size > 0 };
     case 'RESET_MODAL':
-      return { ...state, isModalOpen: false, isManualFeedbackOpen: false, selectedElement: null, screenshot: null, hoveredElement: null, hoveredComponentInfo: null, isCanvasActive: false, videoBlob: null, eventLogs: [], lastIntegrationResults: null, clickPosition: null };
+      return { ...state, isModalOpen: false, isManualFeedbackOpen: false, selectedElement: null, screenshot: null, fullScreenshot: null, hoveredElement: null, hoveredComponentInfo: null, isCanvasActive: false, videoBlob: null, eventLogs: [], lastIntegrationResults: null, clickPosition: null };
     // Integration actions
     case 'INTEGRATION_START':
       return {
@@ -359,6 +360,7 @@ export const FeedbackProvider = ({
     tooltipStyle,
     isModalOpen,
     screenshot,
+    fullScreenshot,
     isCapturing,
     isDashboardOpen,
     isCanvasActive,
@@ -542,8 +544,10 @@ export const FeedbackProvider = ({
 
     try {
       const screenshotData = await captureElementScreenshot(hoveredElement);
+      let fullScreenshotData = null;
+      try { fullScreenshotData = await captureElementScreenshot(document.documentElement); } catch { /* 전체화면 실패해도 요소 캡처는 유지 */ }
       kickEagerCompression(screenshotData);
-      dispatch({ type: 'COMPLETE_CAPTURE', payload: screenshotData });
+      dispatch({ type: 'COMPLETE_CAPTURE', payload: screenshotData, fullScreenshot: fullScreenshotData });
     } catch (error) {
       showError('스크린샷 캡처에 실패했어요. 그래도 피드백은 보낼 수 있어요.', '캡처 오류');
       dispatch({ type: 'COMPLETE_CAPTURE', payload: null });
@@ -687,8 +691,10 @@ export const FeedbackProvider = ({
 
     try {
       const screenshotData = await captureElementScreenshot(element);
+      let fullScreenshotData = null;
+      try { fullScreenshotData = await captureElementScreenshot(document.documentElement); } catch { /* 전체화면 실패해도 요소 캡처는 유지 */ }
       kickEagerCompression(screenshotData);
-      dispatch({ type: 'COMPLETE_CAPTURE', payload: screenshotData });
+      dispatch({ type: 'COMPLETE_CAPTURE', payload: screenshotData, fullScreenshot: fullScreenshotData });
     } catch (error) {
       showError('스크린샷 캡처에 실패했어요.', '캡처 오류');
       dispatch({ type: 'COMPLETE_CAPTURE', payload: null });
@@ -1147,6 +1153,7 @@ export const FeedbackProvider = ({
               onClose={handleCloseModal}
               elementInfo={selectedElement ? getElementInfo(selectedElement) : null}
               screenshot={screenshot}
+              fullScreenshot={fullScreenshot}
               videoBlob={videoBlob}
               eventLogs={eventLogs}
               onSubmit={handleFeedbackSubmit}

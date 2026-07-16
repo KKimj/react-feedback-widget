@@ -15,9 +15,12 @@ export const SHEET_COLUMNS = [
   { key: 'component',  header: '요소',      field: 'component',     width: 150, transform: (v) => v || '' },
   { key: 'selector',   header: '셀렉터',    field: 'selector',      width: 210, transform: (v) => v || '' },
   { key: 'link',       header: '링크',      field: 'url',           width: 210 },
-  { key: 'screenshot', header: '스크린샷',  field: 'screenshotUrl', width: 220,
+  { key: 'screenshot',     header: '스크린샷(셀렉터)',   field: 'screenshotUrl',     width: 200,
     transform: (v) => (v ? `=IMAGE("${v}")` : '') },
-  { key: 'imageUrl',   header: '이미지 URL', field: 'screenshotUrl', width: 300, transform: (v) => v || '' },
+  { key: 'fullScreenshot', header: '스크린샷(전체화면)', field: 'fullScreenshotUrl', width: 220,
+    transform: (v) => (v ? `=IMAGE("${v}")` : '') },
+  { key: 'imageUrl',       header: '셀렉터 URL',        field: 'screenshotUrl',     width: 280, transform: (v) => v || '' },
+  { key: 'fullImageUrl',   header: '전체화면 URL',      field: 'fullScreenshotUrl', width: 280, transform: (v) => v || '' },
 ];
 
 export const SHEET_COLUMN_ORDER = SHEET_COLUMNS.map((c) => c.key);

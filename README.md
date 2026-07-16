@@ -8,11 +8,12 @@
 >
 > ### 추가·수정된 것
 > - 🖊 **스크린샷 펜 드로잉** — 모달 안 스크린샷 위에 빨간펜 표시(`react-sketch-canvas`), 제출 시 이미지에 자동 합성. 툴바(펜/지우개/되돌리기/전체지우기)
+> - 🖼 **스크린샷 2종** — 클릭한 요소(셀렉터) + 전체화면을 각각 캡처·업로드, 시트에 `=IMAGE` 2컬럼 + URL 2컬럼
 > - 🇰🇷 **한글 UI** — 모달·카테고리·우선순위
 > - 🏷 **제출 ID** — `qa-YYYY-MM-DD-HHMMSS` 형식(초까지)
 > - 🐛 **버그 수정** — Google Sheets `append` 가 쿼리스트링을 JSON body 에 붙여 400 나던 문제(→ URL 로 이동 + `USER_ENTERED`)
 > - 💬 **Slack 카드 강화** — 이미지 블록 + 선택 요소(`component`/`selector`) + 스프레드시트 링크(옵션)
-> - 📄 **시트 컬럼** — `ID·우선순위·원문·제보자·상태·담당자·작업내용·요소·셀렉터·링크·스크린샷(=IMAGE)·이미지 URL` (제보자 = 위젯 `userName`/`userEmail` prop)
+> - 📄 **시트 컬럼** — `ID·우선순위·원문·제보자·상태·담당자·작업내용·요소·셀렉터·링크·스크린샷(셀렉터)·스크린샷(전체화면)·셀렉터 URL·전체화면 URL` (제보자 = 위젯 `userName`/`userEmail` prop)
 > - 🎨 **시트 포맷 초기화**([`example-express/init-sheet.mjs`](./example-express/init-sheet.mjs)) — 헤더/헤더고정/컬럼너비/행높이 + 우선순위·상태 **드롭다운**을 한 번에 세팅. 컬럼 정의는 [`sheet-columns.mjs`](./example-express/sheet-columns.mjs) **단일 SoT**(통합 서버 append 와 공유 → 컬럼 바꿔도 서로 안 어긋남)
 > - 🔗 **원클릭 e2e 통합 서버**([`example-express/mini-e2e-server.mjs`](./example-express/mini-e2e-server.mjs)) — 스크린샷 base64 → Cloud Storage 업로드 + Google Sheets + Slack 을 한 번에. SA(서비스계정)는 **선택** — 없으면 Slack 만 동작
 >

@@ -84,17 +84,18 @@ app.post('/api/feedback', async (req, res) => {
       const p = (n) => String(n).padStart(2, '0');
       fb.id = `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
     }
-    // 스크린샷 base64 → Storage 업로드 (SA 있을 때만)
-    const shot = fb.screenshot;
-    if (bucket && typeof shot === 'string' && shot.startsWith('data:')) {
-      const m = shot.match(/^data:(image\/[\w.+-]+);base64,(.+)$/);
-      if (m) {
-        const ext = (m[1].split('/')[1] || 'png').replace('jpeg', 'jpg');
-        const name = `${CONFIG.storagePath}/${fb.id}.${ext}`;
-        await bucket.file(name).save(Buffer.from(m[2], 'base64'), { contentType: m[1] });
-        fb.screenshotUrl = `https://firebasestorage.googleapis.com/v0/b/${CONFIG.bucket}/o/${encodeURIComponent(name)}?alt=media`;
-      }
+    // 스크린샷 base64 → Storage 업로드 (SA 있을 때만). 셀렉터 + 전체화면 2장.
+    async function uploadShot(dataUrl, suffix) {
+      if (!bucket || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:')) return null;
+      const m = dataUrl.match(/^data:(image\/[\w.+-]+);base64,(.+)$/);
+      if (!m) return null;
+      const ext = (m[1].split('/')[1] || 'png').replace('jpeg', 'jpg');
+      const name = `${CONFIG.storagePath}/${fb.id}${suffix}.${ext}`;
+      await bucket.file(name).save(Buffer.from(m[2], 'base64'), { contentType: m[1] });
+      return `https://firebasestorage.googleapis.com/v0/b/${CONFIG.bucket}/o/${encodeURIComponent(name)}?alt=media`;
     }
+    fb.screenshotUrl = (await uploadShot(fb.screenshot, '')) || fb.screenshotUrl;
+    fb.fullScreenshotUrl = (await uploadShot(fb.fullScreenshot, '-full')) || fb.fullScreenshotUrl;
     if (SHEET_LINK) fb.sheetUrl = SHEET_LINK;
     // 시트 append (SA 있을 때만) + Slack 카드(항상)
     if (sheets) await sheets({ body: { action: 'append', feedbackData: fb } }, null);

@@ -439,6 +439,7 @@ export const FeedbackModal = ({
   onClose,
   elementInfo,
   screenshot,
+  fullScreenshot,
   videoBlob,
   eventLogs,
   onSubmit,
@@ -571,6 +572,7 @@ export const FeedbackModal = ({
       severity: priority,
       labels,
       screenshot: flatShot,
+      fullScreenshot: fullScreenshot || null,   // 전체화면은 펜 드로잉 없이 원본
       videoBlob: videoBlob || manualVideo,
       attachment: manualFile,
       eventLogs: eventLogs || [],
