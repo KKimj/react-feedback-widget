@@ -141,25 +141,25 @@ export const SubmissionQueue = ({ submissions, onDismiss, mode = 'light' }) => {
       case 'submitting':
         return {
           icon: <SpinningLoader size={18} />,
-          title: 'Submitting feedback...',
-          subtitle: 'Please wait'
+          title: '피드백 보내는 중...',
+          subtitle: '잠시만 기다려주세요'
         };
       case 'success':
         return {
           icon: <SuccessIcon size={18} />,
-          title: 'Submitted successfully!',
-          subtitle: 'Feedback received'
+          title: '전송 완료!',
+          subtitle: '피드백이 접수됐어요'
         };
       case 'error':
         return {
           icon: <ErrorIcon size={18} />,
-          title: 'Submission failed',
-          subtitle: 'Please try again'
+          title: '전송 실패',
+          subtitle: '다시 시도해주세요'
         };
       default:
         return {
           icon: <SpinningLoader size={18} />,
-          title: 'Processing...',
+          title: '처리 중...',
           subtitle: ''
         };
     }
@@ -172,7 +172,7 @@ export const SubmissionQueue = ({ submissions, onDismiss, mode = 'light' }) => {
           const { icon, title, subtitle } = getStatusInfo(submission.status);
           const results = submission.destinationResults || [];
           const summary = results.length
-            ? `${results.filter((r) => r.ok).length}/${results.length} destinations`
+            ? `${results.filter((r) => r.ok).length}/${results.length}곳 전송됨`
             : subtitle;
           return (
             <QueueItem
@@ -190,7 +190,7 @@ export const SubmissionQueue = ({ submissions, onDismiss, mode = 'light' }) => {
                     {results.map((r) => (
                       <span key={r.name} title={r.ok
                         ? `${r.name} · ${r.durationMs}ms${r.url ? ' · ' + r.url : ''}`
-                        : `${r.name} failed: ${r.error || 'unknown'}`}
+                        : `${r.name} 실패: ${r.error || '알 수 없음'}`}
                         style={{
                           display: 'inline-flex', alignItems: 'center', gap: 4,
                           fontSize: 10, fontWeight: 600,
