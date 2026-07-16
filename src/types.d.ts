@@ -220,6 +220,9 @@ export interface FeedbackProviderProps {
   };
   onIntegrationSuccess?: (type: string, result: unknown) => void;
   onIntegrationError?: (type: string, error: unknown) => void;
+  enableMobileFeedback?: boolean;
+  triggerBottom?: number;
+  triggerRight?: number;
   children?: ReactNode;
 }
 
