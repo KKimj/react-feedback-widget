@@ -1,19 +1,28 @@
-// 위젯 원클릭 e2e 통합 서버: screenshot(base64)→Storage 업로드 + 시트 append + Slack 카드
+// 위젯 원클릭 e2e 통합 서버 — 설정은 전부 .env 로 주입 (.env.example 참고)
+// screenshot(base64) → Storage 업로드 + 시트 append + Slack 카드 를 한 번에 처리
 import express from 'express';
 import { Storage } from '@google-cloud/storage';
 import createSheetsHandler from '../src/integrations/sheets.js';
 import { createSlackHandler } from '../src/integrations/server/slack.js';
 
-const KEY = process.env.GOOGLE_APPLICATION_CREDENTIALS || 'your-key';
-const SHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
-const BUCKET = process.env.STORAGE_BUCKET || 'your-bucket';
+// ── 설정 (env 로 주입, 없으면 placeholder) ──
+const CONFIG = {
+  keyFile:       process.env.GOOGLE_APPLICATION_CREDENTIALS || 'your-key',
+  bucket:        process.env.STORAGE_BUCKET || 'your-bucket',
+  storagePath:   process.env.STORAGE_PATH || 'public/qa',
+  spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID || '',
+  sheetName:     process.env.SHEET_NAME || 'Feedback',
+  port:          Number(process.env.PORT) || 3010,
+  // SLACK_WEBHOOK_URL (또는 SLACK_BOT_TOKEN + SLACK_CHANNEL) 은 slack 핸들러가 env 에서 직접 읽음
+};
 
-const storage = new Storage({ keyFilename: KEY });
-const bucket = storage.bucket(BUCKET);
+const storage = new Storage({ keyFilename: CONFIG.keyFile });
+const bucket = storage.bucket(CONFIG.bucket);
 
 const sheets = createSheetsHandler({
-  sheetName: 'QA-위젯-데모',
+  sheetName: CONFIG.sheetName,
   __allowUnwrappedInProd: true,
+  // 시트 컬럼 매핑: ID | 우선순위 | 원문 | 상태 | 작업내용 | 요소 | 셀렉터 | 링크 | 스크린샷
   columnOrder: ['id', 'priority', 'feedback', 'status', 'assignee', 'component', 'selector', 'link', 'screenshot'],
   columns: {
     id:         { header: 'ID',       field: 'id' },
@@ -45,18 +54,18 @@ app.post('/api/feedback', async (req, res) => {
       const p = (n) => String(n).padStart(2, '0');
       fb.id = `qa-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
     }
-    // 스크린샷 base64 → Firebase Storage(public/qa) → 공개 URL
+    // 스크린샷 base64 → Storage 업로드 → 공개 URL
     const shot = fb.screenshot;
     if (typeof shot === 'string' && shot.startsWith('data:')) {
       const m = shot.match(/^data:(image\/[\w.+-]+);base64,(.+)$/);
       if (m) {
         const ext = (m[1].split('/')[1] || 'png').replace('jpeg', 'jpg');
-        const name = `public/qa/${fb.id}.${ext}`;
+        const name = `${CONFIG.storagePath}/${fb.id}.${ext}`;
         await bucket.file(name).save(Buffer.from(m[2], 'base64'), { contentType: m[1] });
-        fb.screenshotUrl = `https://firebasestorage.googleapis.com/v0/b/${BUCKET}/o/${encodeURIComponent(name)}?alt=media`;
+        fb.screenshotUrl = `https://firebasestorage.googleapis.com/v0/b/${CONFIG.bucket}/o/${encodeURIComponent(name)}?alt=media`;
       }
     }
-    if (SHEET_ID) fb.sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+    if (CONFIG.spreadsheetId) fb.sheetUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheetId}/edit`;
     // 시트 append + Slack 카드
     await sheets({ body: { action: 'append', feedbackData: fb } }, null);
     await slack({ body: fb }, null);
@@ -67,4 +76,4 @@ app.post('/api/feedback', async (req, res) => {
   }
 });
 
-app.listen(3010, () => console.log('mini e2e server on http://localhost:3010'));
+app.listen(CONFIG.port, () => console.log(`mini e2e server on http://localhost:${CONFIG.port}`));

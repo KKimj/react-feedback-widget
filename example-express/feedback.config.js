@@ -9,7 +9,7 @@ export default defineConfig({
   destinations: [
     connect.local(),                                     // browser fallback — always include
     connect.sheets(),                                    // env: GOOGLE_SERVICE_ACCOUNT, GOOGLE_SPREADSHEET_ID
-    connect.slack({ channel: '#프로젝트-skt-호시담' }),  // env: SLACK_WEBHOOK_URL
+    connect.slack({ channel: '#feedback' }),             // env: SLACK_WEBHOOK_URL (webhook 이 실제 채널을 결정)
   ],
   ui: { variant: 'two-column' },
 });
