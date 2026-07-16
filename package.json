@@ -140,8 +140,8 @@
     "url": "git+https://github.com/Team-SpaceY/react-feedback-widget.git"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
     "styled-components": "^5.0.0 || ^6.0.0"
   },
   "dependencies": {
