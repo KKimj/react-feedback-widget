@@ -1224,7 +1224,7 @@ export const FeedbackProvider = ({
           visible={showFeedbackDots && !isActive}
         />
 
-        {enableMobileFeedback && isTouchDevice && (
+        {enableMobileFeedback && (
           <MobileTrigger
             mode={mode}
             bottom={triggerBottom}
