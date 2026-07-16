@@ -421,7 +421,7 @@ export const UpdatesModal = ({
           {filteredUpdates.length === 0 ? (
             <EmptyState>
               <Rocket size={32} style={{opacity: 0.3, marginBottom: 12}} />
-              <p>No updates found</p>
+              <p>업데이트가 없어요</p>
             </EmptyState>
           ) : (
             filteredUpdates.map((update, index) => {

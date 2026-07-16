@@ -763,7 +763,7 @@ export const FeedbackModal = ({
                  $active={selectedIntegrations.jira} 
                  $type="jira"
                  onClick={() => toggleIntegration('jira')}
-                 title="Send to Jira"
+                 title="Jira로 보내기"
                >
                  <JiraIcon />
                </IntegrationIcon>
@@ -773,7 +773,7 @@ export const FeedbackModal = ({
                  $active={selectedIntegrations.sheets} 
                  $type="sheets"
                  onClick={() => toggleIntegration('sheets')}
-                 title="Send to Sheets"
+                 title="시트로 보내기"
                >
                  <SheetsIcon />
                </IntegrationIcon>

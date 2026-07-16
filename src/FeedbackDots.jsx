@@ -1096,8 +1096,8 @@ export const FeedbackDots = ({ mode = 'light', isDeveloper = false, data = null,
                 )
               ))}
               <ToolbarDivider />
-              <ToolbarPill $active={statusFilter === 'open'} $color="#f59e0b" onClick={() => setStatusFilter(prev => prev === 'open' ? null : 'open')}>Open</ToolbarPill>
-              <ToolbarPill $active={statusFilter === 'resolved'} $color="#10b981" onClick={() => setStatusFilter(prev => prev === 'resolved' ? null : 'resolved')}>Resolved</ToolbarPill>
+              <ToolbarPill $active={statusFilter === 'open'} $color="#f59e0b" onClick={() => setStatusFilter(prev => prev === 'open' ? null : 'open')}>열림</ToolbarPill>
+              <ToolbarPill $active={statusFilter === 'resolved'} $color="#10b981" onClick={() => setStatusFilter(prev => prev === 'resolved' ? null : 'resolved')}>해결됨</ToolbarPill>
               <ToolbarDivider />
               <ToolbarHint>Alt+D</ToolbarHint>
               <ToolbarBtn onClick={() => setToolbarMinimized(true)}><Minimize2 size={14} /></ToolbarBtn>
