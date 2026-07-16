@@ -124,6 +124,18 @@ SHEET_COLUMNS.forEach((c, i) => {
   });
 });
 
+// 3-7. 컬럼별 수평 정렬 (align 지정된 컬럼만 — 원문 등 긴 텍스트는 LEFT)
+SHEET_COLUMNS.forEach((c, i) => {
+  if (!c.align) return;
+  requests.push({
+    repeatCell: {
+      range: { sheetId, startRowIndex: 1, endRowIndex: 1000, startColumnIndex: i, endColumnIndex: i + 1 },
+      cell: { userEnteredFormat: { horizontalAlignment: c.align } },
+      fields: 'userEnteredFormat.horizontalAlignment',
+    },
+  });
+});
+
 await client.request({ url: `${base}:batchUpdate`, method: 'POST', data: { requests } });
 
 // 4. (선택) 데이터 행 비우기 — 컬럼 구조(개수/순서)를 바꾼 뒤 옛 행이 한 칸씩 밀려 보일 때

@@ -6,7 +6,7 @@ export const SHEET_COLUMNS = [
   { key: 'id',         header: 'ID',        field: 'id',            width: 175 },
   { key: 'priority',   header: '우선순위',  field: 'severity',      width: 80,  transform: (v) => v || '',
     validation: ['P0', 'P1', 'P2', 'P3'] },
-  { key: 'feedback',   header: '원문',      field: 'feedback',      width: 340 },
+  { key: 'feedback',   header: '원문',      field: 'feedback',      width: 340, align: 'LEFT' },
   { key: 'reporter',   header: '제보자',    field: 'reporter',      width: 110, transform: (v) => v || '' },
   { key: 'status',     header: '상태',      field: 'status',        width: 90,  transform: (v) => v || '신규',
     validation: ['신규', '열림', '진행중', '검토중', '해결됨', '닫힘'] },
