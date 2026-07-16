@@ -3,11 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node mini-e2e-server.mjs",
+    "init-sheet": "node init-sheet.mjs"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.21.0",
     "express": "^4.19.0",
+    "google-auth-library": "^9.0.0",
     "react-visual-feedback": "file:.."
   }
 }
