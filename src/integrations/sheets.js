@@ -178,7 +178,11 @@ class SheetsClient {
   async appendRow(values, sheetName = null) {
     const range = `${sheetName || this.sheetName}!A:Z`;
 
-    return this.request(`/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`, {
+    // OVERWRITE(insertDataOption 생략 = 기본): 헤더 아래 기존 행에 값만 덮어쓴다 → 셀 서식 보존.
+    // ⚠️ INSERT_ROWS 를 쓰면 새 행이 삽입되며 바로 위 행(헤더=남색+흰글씨) 서식을 상속해
+    //    데이터 행 색이 번진다. init-sheet 가 데이터 영역을 흰배경으로 미리 세팅하므로
+    //    OVERWRITE 로 그 흰 서식을 유지한다.
+    return this.request(`/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED`, {
       method: 'POST',
       body: JSON.stringify({
         values: [values],
