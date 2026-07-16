@@ -85,11 +85,11 @@ SHEET_COLUMNS.forEach((c, i) => {
   });
 });
 
-// 3-4. 데이터 행 높이 (기본 21px — 행이 높아지지 않게. =IMAGE 는 셀 크기에 맞춰 축소 표시)
+// 3-4. 데이터 행 높이 (20px — 낮고 깔끔하게. =IMAGE 는 셀 크기에 맞춰 축소 표시)
 requests.push({
   updateDimensionProperties: {
     range: { sheetId, dimension: 'ROWS', startIndex: 1, endIndex: 1000 },
-    properties: { pixelSize: 21 }, fields: 'pixelSize',
+    properties: { pixelSize: 20 }, fields: 'pixelSize',
   },
 });
 
