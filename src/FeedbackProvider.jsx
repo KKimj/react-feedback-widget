@@ -545,7 +545,7 @@ export const FeedbackProvider = ({
       kickEagerCompression(screenshotData);
       dispatch({ type: 'COMPLETE_CAPTURE', payload: screenshotData });
     } catch (error) {
-      showError('Failed to capture screenshot. You can still submit feedback.', 'Capture Error');
+      showError('스크린샷 캡처에 실패했어요. 그래도 피드백은 보낼 수 있어요.', '캡처 오류');
       dispatch({ type: 'COMPLETE_CAPTURE', payload: null });
     }
   }, [isActive, hoveredElement]);
@@ -690,7 +690,7 @@ export const FeedbackProvider = ({
       kickEagerCompression(screenshotData);
       dispatch({ type: 'COMPLETE_CAPTURE', payload: screenshotData });
     } catch (error) {
-      showError('Failed to capture screenshot.', 'Capture Error');
+      showError('스크린샷 캡처에 실패했어요.', '캡처 오류');
       dispatch({ type: 'COMPLETE_CAPTURE', payload: null });
     }
   }, [isActive, isCanvasActive, isModalOpen, isValidElement]);

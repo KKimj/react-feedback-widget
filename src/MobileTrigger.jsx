@@ -48,7 +48,7 @@ export const MobileTrigger = ({ mode = 'light', isActive, onActivate, onCancel }
       <TriggerButton
         $active={isActive}
         onClick={isActive ? onCancel : onActivate}
-        aria-label={isActive ? 'Cancel feedback' : 'Send feedback'}
+        aria-label={isActive ? '피드백 취소' : '피드백 보내기'}
       >
         {isActive
           ? <span style={{ fontSize: 22, lineHeight: 1 }}>✕</span>

@@ -170,15 +170,15 @@ export const showToast = (toast) => {
   }
 };
 
-export const showError = (message, title = 'Error') => {
+export const showError = (message, title = '오류') => {
   showToast({ type: 'error', title, message });
 };
 
-export const showSuccess = (message, title = 'Success') => {
+export const showSuccess = (message, title = '성공') => {
   showToast({ type: 'success', title, message });
 };
 
-export const showInfo = (message, title = 'Info') => {
+export const showInfo = (message, title = '안내') => {
   showToast({ type: 'info', title, message });
 };
 

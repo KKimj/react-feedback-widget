@@ -449,9 +449,9 @@ export const CanvasOverlay = ({ isActive, onComplete, onCancel, mode = 'light' }
         {/* Drawing Tools - Only Clear button */}
         {!showFeedbackInput && (
           <ToolsContainer>
-            <ToolButton onClick={clearCanvas} title="Clear All">
+            <ToolButton onClick={clearCanvas} title="전체 지우기">
               <Trash2 size={18} />
-              Clear
+              지우기
             </ToolButton>
           </ToolsContainer>
         )}
@@ -464,7 +464,7 @@ export const CanvasOverlay = ({ isActive, onComplete, onCancel, mode = 'light' }
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type feedback..."
+            placeholder="피드백 입력..."
             style={{
               left: `${inputPosition.x}px`,
               top: `${inputPosition.y}px`,

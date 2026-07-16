@@ -35,12 +35,12 @@ const DOT_COLORS = {
 const RESOLVED_STATUSES = new Set(['resolved', 'closed', 'wontFix']);
 
 const DOT_STATUSES = {
-  new: { label: 'New', color: '#8b5cf6', bgColor: '#ede9fe', textColor: '#6d28d9', icon: 'Inbox' },
-  open: { label: 'Open', color: '#f59e0b', bgColor: '#fef3c7', textColor: '#92400e', icon: 'AlertCircle' },
-  inProgress: { label: 'In Progress', color: '#3b82f6', bgColor: '#dbeafe', textColor: '#1e40af', icon: 'Play' },
-  underReview: { label: 'Under Review', color: '#06b6d4', bgColor: '#cffafe', textColor: '#0e7490', icon: 'Eye' },
-  resolved: { label: 'Resolved', color: '#10b981', bgColor: '#d1fae5', textColor: '#065f46', icon: 'CheckCircle' },
-  closed: { label: 'Closed', color: '#64748b', bgColor: '#e2e8f0', textColor: '#334155', icon: 'Archive' },
+  new: { label: '신규', color: '#8b5cf6', bgColor: '#ede9fe', textColor: '#6d28d9', icon: 'Inbox' },
+  open: { label: '열림', color: '#f59e0b', bgColor: '#fef3c7', textColor: '#92400e', icon: 'AlertCircle' },
+  inProgress: { label: '진행중', color: '#3b82f6', bgColor: '#dbeafe', textColor: '#1e40af', icon: 'Play' },
+  underReview: { label: '검토중', color: '#06b6d4', bgColor: '#cffafe', textColor: '#0e7490', icon: 'Eye' },
+  resolved: { label: '해결됨', color: '#10b981', bgColor: '#d1fae5', textColor: '#065f46', icon: 'CheckCircle' },
+  closed: { label: '닫힘', color: '#64748b', bgColor: '#e2e8f0', textColor: '#334155', icon: 'Archive' },
 };
 
 // =====================================================================
