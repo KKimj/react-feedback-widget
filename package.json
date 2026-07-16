@@ -1,6 +1,9 @@
 {
-  "name": "react-visual-feedback",
-  "version": "2.3.3",
+  "name": "@team-spacey/react-feedback-widget",
+  "version": "2.3.4",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "description": "A visual feedback widget for React applications with element selection, screenshot capture, professional dashboard, and Jira/Google Sheets integrations",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -134,7 +137,7 @@
   "homepage": "https://react-library-demo-rosy.vercel.app/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Murali1889/react-feedback-widget.git"
+    "url": "git+https://github.com/Team-SpaceY/react-feedback-widget.git"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
