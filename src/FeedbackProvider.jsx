@@ -477,7 +477,7 @@ export const FeedbackProvider = ({
       return false;
     }
 
-    if (element.closest('.feedback-overlay, .feedback-modal, .feedback-backdrop, .feedback-tooltip, .feedback-highlight, .feedback-dots-container')) {
+    if (element.closest('.feedback-overlay, .feedback-modal, .feedback-backdrop, .feedback-tooltip, .feedback-highlight, .feedback-dots-container, .feedback-trigger')) {
       return false;
     }
 

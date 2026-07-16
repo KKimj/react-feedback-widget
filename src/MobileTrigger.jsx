@@ -99,6 +99,7 @@ export const MobileTrigger = ({ mode = 'light', isActive, onActivate, onCancel, 
   return createPortal(
     <ThemeProvider theme={theme}>
       <TriggerButton
+        className="feedback-trigger"
         $active={isActive}
         $bottom={bottom}
         $right={right}
